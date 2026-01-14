@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Table from './components/Table';
 import LineGraph from './components/LineGraph';
 import BarChart from './components/BarChart';
+import Form from './components/Form';
 
 function App() {
   const [data, setData] = useState(null);
@@ -46,18 +47,30 @@ function App() {
       </div>;
     }
 
-    // Check if data has a visualization type specified
-    if (data.type && data.data) {
-      const vizData = data.data;
-      const { xKey, yKey, yKeys, colors, label } = data;
-
+    // Check if data has a type specified
+    if (data.type) {
       switch (data.type) {
+        case 'form':
+          return <Form schema={data} />;
         case 'line':
-          return <LineGraph data={vizData} xKey={xKey} yKey={yKey} yKeys={yKeys} colors={colors} label={label} />;
+          if (data.data) {
+            const vizData = data.data;
+            const { xKey, yKey, yKeys, colors, label } = data;
+            return <LineGraph data={vizData} xKey={xKey} yKey={yKey} yKeys={yKeys} colors={colors} label={label} />;
+          }
+          break;
         case 'bar':
-          return <BarChart data={vizData} xKey={xKey} yKey={yKey} label={label} />;
+          if (data.data) {
+            const vizData = data.data;
+            const { xKey, yKey, label } = data;
+            return <BarChart data={vizData} xKey={xKey} yKey={yKey} label={label} />;
+          }
+          break;
         case 'table':
-          return <Table data={vizData} />;
+          if (data.data) {
+            return <Table data={data.data} />;
+          }
+          break;
         default:
           return <pre>{JSON.stringify(data, null, 2)}</pre>;
       }
